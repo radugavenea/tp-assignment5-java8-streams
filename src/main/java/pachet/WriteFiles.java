@@ -55,9 +55,21 @@ public class WriteFiles {
         writer.close();
     }
 
-    
+
     // for 4.
-    public void writeTotalDurationOfActivitiesInFile(Map<String, Hours> totalDurationOfActivitiesMap, String s) {
+    public void writeTotalDurationOfActivitiesInFile(Map<String, Hours> totalDurationOfActivitiesMap, String filename) throws IOException {
+        createFile(filename);
+        FileWriter writer = new FileWriter(folderName + filename);
+
+        totalDurationOfActivitiesMap.entrySet().stream()
+                .forEach(e -> {
+                    try {
+                        writer.append(e.toString() + "\n");
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                });
+        writer.close();
     }
 
 

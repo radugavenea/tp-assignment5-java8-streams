@@ -1,0 +1,3 @@
+Sleeping=PT131H
+Leaving=PT27H
+Spare_Time/TV=PT142H

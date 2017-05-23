@@ -1,3 +1,8 @@
+package pachet;
+
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
+
 import java.util.Date;
 
 /**
@@ -5,29 +10,29 @@ import java.util.Date;
  */
 public class MonitoredData {
 
-    private Date startTime;
-    private Date endTime;
+    private DateTime startTime;
+    private DateTime endTime;
     private String activityLabel;
 
-    public MonitoredData(Date startTime, Date endTime, String activityLabel) {
+    public MonitoredData(DateTime startTime, DateTime endTime, String activityLabel) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.activityLabel = activityLabel;
     }
 
-    public Date getStartTime() {
+    public DateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(DateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public DateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(DateTime endTime) {
         this.endTime = endTime;
     }
 
@@ -38,4 +43,5 @@ public class MonitoredData {
     public void setActivityLabel(String activityLabel) {
         this.activityLabel = activityLabel;
     }
+
 }

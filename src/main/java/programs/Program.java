@@ -1,6 +1,7 @@
 package programs;
 
 import org.joda.time.Hours;
+import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 import pachet.MonitoredData;
 import pachet.ReadFile;
@@ -24,13 +25,12 @@ public class Program {
 
         System.out.println(
         rf.getMonitoredDatas().stream()
-                .map(e -> e.getStartTime().getDayOfMonth())
+                .map(e -> e.getStartTime().getDayOfYear())
                 .distinct()
                 .count());
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // 2. Determine a map of type <String, Integer> that maps to each distinct action type the number of
@@ -41,7 +41,7 @@ public class Program {
                         MonitoredData::getActivityLabel,
                         Collectors.counting()
                 ));
-        System.out.println(distinctActionsMapLong + "\n");
+        System.out.println("\n" + distinctActionsMapLong + "\n");
 
         Map<String,Integer> distinctActionsMapInteger =  rf.getMonitoredDatas().stream()
                 .collect(Collectors.groupingBy(
@@ -54,7 +54,7 @@ public class Program {
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // 3. Generates a data structure of type Map<Integer, Map<String, Integer>> that contains the activity
@@ -78,7 +78,7 @@ public class Program {
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // 4. Determine a data structure of the form Map<String, DateTime> that maps for each activity the total
@@ -114,9 +114,78 @@ public class Program {
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue().toStandardHours()));   // this displays it in hours
 
         wf.writeTotalDurationOfActivitiesInFile(totalDurationOfActivitiesMap,"4.txt");
-        
-        
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        // 5. Filter the activities that have 90% of the monitoring samples with duration less than 5 minutes,
+        // collect the results in a List<String> containing only the distinct activity names and write the result
+        // in a text file.
+
+
+
+        Map<String,List<MonitoredData>> lessThanFiveMinActivities =
+            rf.getMonitoredDatas().stream()
+                .filter(e -> isLessThanFive(e))
+                .collect(Collectors.groupingBy(
+                        MonitoredData::getActivityLabel,
+                        Collectors.toList()
+                ));
+
+
+        // contains all the activities names where there are activities less than 5 minutes (no 90% check)
+        List<String> lessThanFive =
+        rf.getMonitoredDatas().stream()
+                .filter(e -> isLessThanFive(e))
+                .collect(Collectors.groupingBy(
+                        MonitoredData::getActivityLabel,
+                        Collectors.toList()
+                )).entrySet()
+                .stream()
+                .map(e -> e.getKey())
+                .collect(Collectors.toList());
+
+        wf.writeLessThanFiveMinutes(lessThanFive,"5.txt");
+
+        ////////////////////////////    work in progress    /////////////////////////////////
+
+        // Map< String, Map< String, List<MonitoredDate> >
+        rf.getMonitoredDatas().stream()
+                .collect(Collectors.groupingBy(
+                        MonitoredData::getActivityLabel,
+                        Collectors.groupingBy(
+                                e -> {
+                                    if(isLessThanFive(e)) return "less";
+                                    else return "more";
+                                }
+                        )
+                ));
+
+        Map <String,Long> cici =
+                rf.getMonitoredDatas().stream()
+//                    .filter(e -> e.getActivityLabel().equals("Grooming"))
+                    .collect(Collectors.groupingBy(
+                            MonitoredData::getActivityLabel,
+                            Collectors.groupingBy(e -> {
+                                if(isLessThanFive(e)) return "less";
+                                else return "more";
+                            },Collectors.counting())
+                    )).entrySet().stream()
+                .map(e -> e.getValue())
+                .findFirst().get();
+
+
+
         System.out.println("cici");
+    }
+
+
+    private static boolean isLessThanFive(MonitoredData e) {
+        if(Minutes.minutesBetween(e.getStartTime(),e.getEndTime()).compareTo(Minutes.minutes(5)) < 0){
+            return true;
+        }
+        return false;
     }
 
 

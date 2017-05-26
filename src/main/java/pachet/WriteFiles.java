@@ -5,6 +5,7 @@ import org.joda.time.Hours;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,6 +74,20 @@ public class WriteFiles {
     }
 
 
+    public void writeLessThanFiveMinutes(List<String> lessThanFive, String filename) throws IOException {
+        createFile(filename);
+        FileWriter writer = new FileWriter(folderName + filename);
+
+        lessThanFive.stream()
+                .forEach(e -> {
+                    try {
+                        writer.append(e.toString() + "\n");
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                });
+        writer.close();
+    }
 
     private void createFile(String filename) throws IOException {
         File file = new File(folderName + filename);

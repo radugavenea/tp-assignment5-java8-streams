@@ -1,9 +1,6 @@
 package pachet;
 
 import org.joda.time.DateTime;
-import org.joda.time.Seconds;
-
-import java.util.Date;
 
 /**
  * Created by radu on 21.05.2017.

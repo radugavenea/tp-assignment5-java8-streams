@@ -110,7 +110,6 @@ public class Program {
                         )
                 )).entrySet().stream()
                 .filter(e -> e.getValue().compareTo(Seconds.seconds(36000)) > 0)
-//                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));           // this displays it in seconds
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue().toStandardHours()));   // this displays it in hours
 
         wf.writeTotalDurationOfActivitiesInFile(totalDurationOfActivitiesMap,"4.txt");
@@ -134,7 +133,7 @@ public class Program {
                 ));
 
 
-        // contains all the activities names where there are activities less than 5 minutes (no 90% check)
+        // contains all the activities that take less than 5 minutes (no 90% of all check)
         List<String> lessThanFive =
         rf.getMonitoredDatas().stream()
                 .filter(e -> isLessThanFive(e))
@@ -147,6 +146,14 @@ public class Program {
                 .collect(Collectors.toList());
 
         wf.writeLessThanFiveMinutes(lessThanFive,"5.txt");
+
+
+
+
+
+
+
+
 
         ////////////////////////////    work in progress    /////////////////////////////////
 

@@ -9,6 +9,7 @@ import pachet.WriteFiles;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -124,17 +125,8 @@ public class Program {
 
 
 
-        Map<String,List<MonitoredData>> lessThanFiveMinActivities =
-            rf.getMonitoredDatas().stream()
-                .filter(e -> isLessThanFive(e))
-                .collect(Collectors.groupingBy(
-                        MonitoredData::getActivityLabel,
-                        Collectors.toList()
-                ));
-
-
-        // contains all the activities that take less than 5 minutes (no 90% of all check)
-        List<String> lessThanFive =
+        // contains all the activities that take less than 5 minutes (no 90% check)
+        List<String> lessThanFiveMinActivitiesTest =
         rf.getMonitoredDatas().stream()
                 .filter(e -> isLessThanFive(e))
                 .collect(Collectors.groupingBy(
@@ -145,20 +137,9 @@ public class Program {
                 .map(e -> e.getKey())
                 .collect(Collectors.toList());
 
-        wf.writeLessThanFiveMinutes(lessThanFive,"5.txt");
 
-
-
-
-
-
-
-
-
-        ////////////////////////////    work in progress    /////////////////////////////////
-
-        // Map< String, Map< String, List<MonitoredDate> >
-        rf.getMonitoredDatas().stream()
+        List<String> lessThanFiveNinetyPercent =
+         rf.getMonitoredDatas().stream()
                 .collect(Collectors.groupingBy(
                         MonitoredData::getActivityLabel,
                         Collectors.groupingBy(
@@ -167,24 +148,16 @@ public class Program {
                                     else return "more";
                                 }
                         )
-                ));
-
-        Map <String,Long> cici =
-                rf.getMonitoredDatas().stream()
-//                    .filter(e -> e.getActivityLabel().equals("Grooming"))
-                    .collect(Collectors.groupingBy(
-                            MonitoredData::getActivityLabel,
-                            Collectors.groupingBy(e -> {
-                                if(isLessThanFive(e)) return "less";
-                                else return "more";
-                            },Collectors.counting())
-                    )).entrySet().stream()
-                .map(e -> e.getValue())
-                .findFirst().get();
+                ))
+                .entrySet().stream()
+                    .filter(e -> isMoreThanNinetyPercent(e.getValue()))
+                    .map(e -> e.getKey())
+                    .collect(Collectors.toList());
 
 
+        wf.writeLessThanFiveMinutes(lessThanFiveNinetyPercent,"5.txt");
 
-        System.out.println("cici");
+
     }
 
 
@@ -195,5 +168,26 @@ public class Program {
         return false;
     }
 
+
+    private static boolean isMoreThanNinetyPercent(Map<String, List<MonitoredData>> data) {
+        int lessThanFiveCount;
+        int moreThanFiveCount;
+
+        try {
+            lessThanFiveCount = data.get("less").size();
+        } catch (NullPointerException e){
+            lessThanFiveCount = 0;
+        }
+        try {
+            moreThanFiveCount = data.get("more").size();
+        } catch (NullPointerException e){
+            moreThanFiveCount = 0;
+        }
+
+        if(lessThanFiveCount * 100 / (lessThanFiveCount + moreThanFiveCount) >= 90){
+            return true;
+        }
+        return false;
+    }
 
 }

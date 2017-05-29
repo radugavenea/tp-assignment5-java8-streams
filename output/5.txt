@@ -1,6 +1,1 @@
-Breakfast
-Grooming
-Toileting
-Spare_Time/TV
-Showering
 Snack

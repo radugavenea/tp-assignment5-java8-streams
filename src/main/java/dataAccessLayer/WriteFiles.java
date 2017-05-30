@@ -1,4 +1,4 @@
-package pachet;
+package dataAccessLayer;
 
 import org.joda.time.Hours;
 
@@ -74,6 +74,7 @@ public class WriteFiles {
     }
 
 
+    // for 5.
     public void writeLessThanFiveMinutes(List<String> lessThanFive, String filename) throws IOException {
         createFile(filename);
         FileWriter writer = new FileWriter(folderName + filename);
@@ -88,6 +89,7 @@ public class WriteFiles {
                 });
         writer.close();
     }
+
 
     private void createFile(String filename) throws IOException {
         File file = new File(folderName + filename);

@@ -3,13 +3,12 @@ package programs;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
-import pachet.MonitoredData;
-import pachet.ReadFile;
-import pachet.WriteFiles;
+import dataAccessLayer.MonitoredData;
+import dataAccessLayer.ReadFile;
+import dataAccessLayer.WriteFiles;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -87,15 +86,6 @@ public class Program {
         // 10 hours. Write the result in a text file.
 
 
-        Map <String,List<Seconds>> test =
-                rf.getMonitoredDatas().stream()
-                .collect(Collectors.groupingBy(MonitoredData::getActivityLabel,
-                        Collectors.mapping(e -> {
-                                return Seconds.secondsBetween(e.getStartTime(), e.getEndTime());
-                            },
-                            Collectors.toList())));
-
-
 
         Map<String,Hours> totalDurationOfActivitiesMap = rf.getMonitoredDatas().stream()
                 .collect(Collectors.groupingBy(
@@ -123,20 +113,7 @@ public class Program {
         // collect the results in a List<String> containing only the distinct activity names and write the result
         // in a text file.
 
-
-
-        // contains all the activities that take less than 5 minutes (no 90% check)
-        List<String> lessThanFiveMinActivitiesTest =
-        rf.getMonitoredDatas().stream()
-                .filter(e -> isLessThanFive(e))
-                .collect(Collectors.groupingBy(
-                        MonitoredData::getActivityLabel,
-                        Collectors.toList()
-                )).entrySet()
-                .stream()
-                .map(e -> e.getKey())
-                .collect(Collectors.toList());
-
+        
 
         List<String> lessThanFiveNinetyPercent =
          rf.getMonitoredDatas().stream()
